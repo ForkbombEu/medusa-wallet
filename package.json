@@ -1,0 +1,21 @@
+{
+  "name": "medusa-wallet",
+  "version": "0.1.0",
+  "description": "headless wallet for test and conformance",
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@credo-ts/askar": "0.7.5",
+    "@credo-ts/core": "0.7.5",
+    "@credo-ts/node": "0.7.5",
+    "@openwallet-foundation/askar-nodejs": "0.6.1"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "bin": {
+    "medusa-wallet": "./src/cli.js"
+  }
+}
