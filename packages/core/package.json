@@ -2,6 +2,7 @@
   "name": "@medusa-wallet/core",
   "version": "0.0.0",
   "description": "Headless EUDI-ARF holder wallet domain logic, built on Credo",
+  "license": "Apache-2.0",
   "type": "module",
   "exports": {
     ".": {

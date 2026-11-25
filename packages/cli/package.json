@@ -2,6 +2,7 @@
   "name": "@medusa-wallet/cli",
   "version": "0.0.0",
   "description": "Command-line interface for the medusa headless wallet",
+  "license": "Apache-2.0",
   "type": "module",
   "bin": {
     "medusa-wallet": "./dist/bin.js"

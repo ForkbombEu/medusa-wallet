@@ -29,3 +29,7 @@ pnpm build       # emit dist/ for each package
 - [CLI reference](docs/cli.md)
 - [Testing against capture-wallet](docs/testing-against-capture-wallet.md)
 - [Agent instructions](AGENTS.md)
+
+## License
+
+[Apache-2.0](LICENSE)
