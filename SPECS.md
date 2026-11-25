@@ -19,7 +19,7 @@ pnpm workspace `medusa-wallet`:
 
 ## Frameworks and dependencies
 
-- Credo-TS `@credo-ts/{core,node,askar}` pinned to exact stable `0.7.5`, plus `@credo-ts/openid4vc` when the issuance flow lands. Askar storage through `@openwallet-foundation/askar-nodejs@0.6.1`.
+- Credo-TS `@credo-ts/{core,node,askar,openid4vc}` pinned to exact stable `0.7.5`. Askar storage through `@openwallet-foundation/askar-nodejs@0.6.1`.
 - Upgrade Credo only when an e2e test shows the pinned version lacks a protocol feature; record the gap in `docs/architecture.md`. Interop is defined by the specs in `STANDARDS.md`, not by matching the counterparty's library version.
 - CLI: `commander`. Tests: `vitest`. Lint/format: Biome. Dev runner: `tsx`.
 
@@ -42,7 +42,9 @@ CLI only (`medusa-wallet`). No web UI and no API, so `DESIGN.md` branding steps 
 
 - Wallet storage is a persistent SQLite file (Askar). There is no in-memory/ephemeral mode.
 - `MEDUSA_WALLET_KEY`: wallet encryption key, read only from the environment.
-- `MEDUSA_WALLET_DIR` (default `~/.medusa-wallet`) selects the storage directory.
+- `MEDUSA_WALLET_DIR` or `--wallet-dir` (default `~/.medusa-wallet`) selects the storage directory; the store is `<dir>/wallet.db`.
+- `--insecure-http` allows plain-http issuer URLs (core option `allowInsecureHttp`), for a local capture-wallet.
+- Issuer trust (core option `trust`) defaults to `presented-chain`: received credentials are verified, but the trust anchor is the root of the chain they carry. A pinned list of certificates is the alternative. See `docs/architecture.md`.
 - `CAPTURE_WALLET_URL`: counterparty base URL for e2e tests. e2e suites are skipped when it is unset.
 
 ## Build, format, lint, and test commands

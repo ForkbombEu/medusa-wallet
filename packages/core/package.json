@@ -18,6 +18,7 @@
     "@credo-ts/askar": "0.7.5",
     "@credo-ts/core": "0.7.5",
     "@credo-ts/node": "0.7.5",
+    "@credo-ts/openid4vc": "0.7.5",
     "@openwallet-foundation/askar-nodejs": "0.6.1"
   }
 }
