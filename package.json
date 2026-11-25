@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Headless EUDI-ARF holder wallet for testing issuers and verifiers",
+  "license": "Apache-2.0",
   "type": "module",
   "packageManager": "pnpm@11.1.2",
   "engines": {
