@@ -1,0 +1,36 @@
+version: "3"
+
+tasks:
+  install:
+    cmds:
+      - pnpm install
+
+  format:
+    cmds:
+      - pnpm format
+
+  lint:
+    cmds:
+      - pnpm lint
+      - pnpm typecheck
+      - task lint:design
+
+  lint:design:
+    cmds:
+      - npx --yes @google/design.md lint DESIGN.md
+
+  test:
+    cmds:
+      - pnpm test
+
+  test:e2e:
+    cmds:
+      - pnpm test:e2e
+
+  build:
+    cmds:
+      - pnpm build
+
+  run:
+    cmds:
+      - pnpm medusa {{.CLI_ARGS}}

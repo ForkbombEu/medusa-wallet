@@ -6,7 +6,18 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!**/dist", "!**/coverage"]
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/coverage",
+      "!brand",
+      "!directives",
+      "!HITL",
+      "!AGENTS.md",
+      "!CONTRIBUTING.md",
+      "!DESIGN.md",
+      "!docs/CREATE_PROJECT.md"
+    ]
   },
   "formatter": {
     "indentStyle": "space",

@@ -48,6 +48,17 @@ curl -s "$CAPTURE_WALLET_URL/sessions/<session_id>/events"   # what medusa sent
 
 Wallet attestation client auth (`attest_jwt_client_auth`) is optional; anonymous pre-authorized token requests are accepted. The service trusts the last certificate in an attestation's `x5c` chain, so self-signed test attesters work.
 
+## Automatic per-issuer suite (target)
+
+The e2e suite discovers what to test instead of hardcoding it:
+
+1. List capture-wallet's credential issuers and, for each, its credential configurations from `/.well-known/openid-credential-issuer/issuers/<issuer_configuration_id>`.
+2. For each issuer × configuration × supported flow (`pre_authorized_code`, `authorization_code`), create a session with `POST /sessions`.
+3. Run the deeplink through medusa core and assert the stored credential and the session's `/events`.
+4. When medusa does not yet support what a combination needs (for example key attestation), report that case as skipped with the reason instead of failing the suite.
+
+A new issuer or configuration on capture-wallet is then covered with no test changes.
+
 ## Writing an e2e test
 
 Name it `*.e2e.test.ts`. Assert both sides: what medusa stored (the decoded claims) and what capture-wallet recorded in `/events`. Assert on the session status rather than on log text.

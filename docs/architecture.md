@@ -18,7 +18,7 @@ Credo types never cross core's public API (`packages/core/src/index.ts`). Fronte
 
 | Module          | Responsibility                                                                                                                                          |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `wallet.ts`     | `openWallet({ storage, key })`: Askar SQLite or in-memory store; owns the Credo agent lifecycle                                                         |
+| `wallet.ts`     | `openWallet({ path, key })`: persistent Askar SQLite store; owns the Credo agent lifecycle                                                              |
 | `agent.ts`      | Credo agent factory (Askar + OpenID4VC holder). Internal; also the hook point for attestation providers                                                 |
 | `keys/`         | holder binding keys (P-256 JWK per HAIP, `did:key` optional); key/wallet attestation for test issuers                                                   |
 | `issuance/`     | offer resolution (`openid-credential-offer://`, `eu-eaa-offer://`, `haip-vci://`); pre-authorized and authorization-code (PAR + PKCE S256 + DPoP) flows |
@@ -32,8 +32,7 @@ Credo types never cross core's public API (`packages/core/src/index.ts`). Fronte
 
 ## Dependency policy
 
-- Credo is pinned to an exact stable release (currently `0.7.5`, which is built on `@openid4vc/*` 0.6). Interop is defined by the specs, not by library versions. Our counterparty runs a Credo 0.8 pre-release, and we do not follow it.
-- We upgrade only when an e2e test shows the pinned version lacks a feature we need. Record each such gap below, with the failing scenario.
+See `SPECS.md` (Frameworks and dependencies). Record here each Credo gap found by an e2e test.
 
 ## Known gaps
 

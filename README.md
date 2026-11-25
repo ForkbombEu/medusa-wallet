@@ -1,34 +1,50 @@
 # medusa-wallet
 
-A headless EUDI-ARF holder wallet for testing and conformance. It receives credentials over OpenID4VCI and presents them over OpenID4VP. You drive it from a CLI or from code, and it shows every protocol step.
+A headless EUDI-ARF holder wallet for testing issuers and verifiers.
 
-Built in TypeScript on [Credo](https://github.com/openwallet-foundation/credo-ts). The wallet logic (`@medusa-wallet/core`) is a library; the CLI (`@medusa-wallet/cli`) is a thin frontend on top of it.
+Testing a credential issuer or verifier normally means a phone, a wallet app, and someone tapping through screens. That is slow, hard to repeat, and hides what went over the wire. medusa is a wallet you drive from a terminal or from code instead: every exchange can be scripted, repeated in CI, and inspected.
 
-> Status: early development. See [docs/architecture.md](docs/architecture.md) for the target design.
+Main functionalities:
 
-## Quick start
+- a persistent, encrypted credential store (SQLite through Askar) holding SD-JWT VC (`dc+sd-jwt`) and mdoc (`mso_mdoc`) credentials, decoded into readable claims;
+- receiving credentials over OpenID4VCI 1.0 (in progress);
+- presenting credentials over OpenID4VP 1.0 with DCQL (planned);
+- automated runs against [capture-wallet](https://capture-wallet.credimi.io), Credimi's test issuer and verifier (in progress).
 
-Requires Node.js ≥ 22.12 and pnpm 11 (`mise install` sets both up).
+## Technical specs
+
+- **TypeScript** on Node.js, as a pnpm workspace of two packages:
+  - `@medusa-wallet/core`: the wallet domain library. It wraps Credo-TS and exposes medusa's own types.
+  - `@medusa-wallet/cli`: the `medusa-wallet` command, a thin frontend over core.
+- **[Credo-TS](https://github.com/openwallet-foundation/credo-ts)** 0.7.5 provides protocols, credential formats and key management. **Askar** provides encrypted storage and the KMS.
+- **commander** for the CLI, **vitest** for tests, **Biome** for lint and format, **Task** + **mise** for the developer harness.
+
+See [SPECS.md](SPECS.md) for the full specification, [STANDARDS.md](STANDARDS.md) for the standards targeted, and [docs/](docs/) for architecture and testing guides.
+
+## How to run
+
+Requires [mise](https://mise.jdx.dev), which installs Node.js, pnpm and Task.
 
 ```sh
-pnpm install
-pnpm medusa --help
+mise install
+task install
+task run -- --help        # run the CLI from source
+task lint && task test    # validate
+task build                # emit packages/*/dist
 ```
 
-## Development
+E2E tests run against capture-wallet:
 
 ```sh
-pnpm lint        # Biome
-pnpm typecheck   # tsc over sources and tests
-pnpm test        # unit tests (vitest)
-pnpm test:e2e    # flows against capture-wallet; needs CAPTURE_WALLET_URL
-pnpm build       # emit dist/ for each package
+CAPTURE_WALLET_URL=https://capture-wallet.credimi.io task test:e2e
 ```
 
-- [Architecture](docs/architecture.md)
-- [CLI reference](docs/cli.md)
-- [Testing against capture-wallet](docs/testing-against-capture-wallet.md)
-- [Agent instructions](AGENTS.md)
+## CLI examples
+
+| Function     | Example                 |
+| ------------ | ----------------------- |
+| Show help    | `task run -- --help`    |
+| Show version | `task run -- --version` |
 
 ## License
 
