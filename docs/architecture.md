@@ -23,8 +23,10 @@ Credo types never cross core's public API (`packages/core/src/index.ts`). Fronte
 | `keys/`         | holder binding keys (P-256 JWK per HAIP, `did:key` optional); key/wallet attestation for test issuers                                                   |
 | `issuance/`     | offer resolution (`openid-credential-offer://`, `eu-eaa-offer://`, `haip-vci://`); pre-authorized and authorization-code (PAR + PKCE S256 + DPoP) flows |
 | `presentation/` | OpenID4VP request resolution, DCQL matching, response submission (`direct_post`, `direct_post.jwt`)                                                     |
-| `credentials/`  | domain `Credential` type, decoding of SD-JWT VC and mdoc records, repository (list/get/delete)                                                          |
+| `credentials/`  | domain `Credential` type, decoding of SD-JWT VC and mdoc records, repository (list/get/delete/import)                                                   |
 | `errors.ts`     | typed errors carrying the counterparty's HTTP status and body                                                                                           |
+
+`credentials.import` stores a credential obtained outside an issuance flow **without** verifying its signature, issuer trust, validity or status.
 
 ### Authorization-code flow without a browser
 
