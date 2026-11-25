@@ -10,7 +10,19 @@ const pkg = createRequire(import.meta.url)('../package.json') as { version: stri
 
 export const coreVersion: string = pkg.version
 
+export type { TrustPolicy } from './agent.js'
 export type { CredentialRepository } from './credentials/repository.js'
 export type { Credential, CredentialFormat } from './credentials/types.js'
-export { CredentialNotFoundError, MedusaError, UnsupportedCredentialError, WalletOpenError } from './errors.js'
+export {
+  CredentialNotFoundError,
+  IssuanceError,
+  MedusaError,
+  OfferResolutionError,
+  TxCodeRequiredError,
+  type TxCodeSpec,
+  UnsupportedCredentialError,
+  WalletOpenError,
+} from './errors.js'
+export type { Issuance, ReceivePreAuthorizedOptions } from './issuance/issuance.js'
+export type { OfferedCredentialConfiguration, ResolvedOffer } from './issuance/offer.js'
 export { openWallet, type Wallet, type WalletOptions } from './wallet.js'

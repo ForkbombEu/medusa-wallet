@@ -7,7 +7,7 @@ Testing a credential issuer or verifier normally means a phone, a wallet app, an
 Main functionalities:
 
 - a persistent, encrypted credential store (SQLite through Askar) holding SD-JWT VC (`dc+sd-jwt`) and mdoc (`mso_mdoc`) credentials, decoded into readable claims;
-- receiving credentials over OpenID4VCI 1.0 (in progress);
+- receiving credentials over OpenID4VCI 1.0: pre-authorized code flow, with or without tx_code (authorization-code flow in progress);
 - presenting credentials over OpenID4VP 1.0 with DCQL (planned);
 - automated runs against [capture-wallet](https://capture-wallet.credimi.io), Credimi's test issuer and verifier (in progress).
 
@@ -41,10 +41,26 @@ CAPTURE_WALLET_URL=https://capture-wallet.credimi.io task test:e2e
 
 ## CLI examples
 
-| Function     | Example                 |
-| ------------ | ----------------------- |
-| Show help    | `task run -- --help`    |
-| Show version | `task run -- --version` |
+Set `MEDUSA_WALLET_KEY` first. The wallet lives in `~/.medusa-wallet/wallet.db` unless `MEDUSA_WALLET_DIR` or `--wallet-dir` says otherwise. Full reference: [docs/cli.md](docs/cli.md).
+
+| Function                             | Example                                                                     |
+| ------------------------------------ | --------------------------------------------------------------------------- |
+| Show help                            | `task run -- --help`                                                        |
+| Inspect an offer                     | `task run -- offer inspect 'openid-credential-offer://?credential_offer=…'` |
+| Receive credentials (pre-authorized) | `task run -- receive 'openid-credential-offer://…' --tx-code 123456`        |
+| List credentials                     | `task run -- credentials list`                                              |
+| Show decoded claims                  | `task run -- credentials show <id>`                                         |
+| Import a credential (unverified)     | `task run -- credentials import < pid.sdjwt`                                |
+| Delete a credential                  | `task run -- credentials delete <id>`                                       |
+
+Try it against capture-wallet:
+
+```sh
+OFFER=$(curl -s -X POST https://capture-wallet.credimi.io/sessions -H 'Content-Type: application/json' \
+  -d '{"issuer_configuration_id":"eu-pid-jwt-proof-only","credential_configuration_id":"urn:eu.europa.ec.eudi:pid:1.sd-jwt.jwt-proof","flow":"pre_authorized_code"}' \
+  | python3 -c 'import json,sys; print(json.load(sys.stdin)["deeplink"])')
+task run -- receive "$OFFER"
+```
 
 ## License
 
