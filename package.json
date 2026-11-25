@@ -1,0 +1,28 @@
+{
+  "name": "medusa-wallet",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Headless EUDI-ARF holder wallet for testing issuers and verifiers",
+  "type": "module",
+  "packageManager": "pnpm@11.1.2",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "typecheck": "tsc -p tsconfig.check.json",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "test": "vitest run --project unit",
+    "test:watch": "vitest",
+    "test:e2e": "vitest run --project e2e",
+    "medusa": "tsx --conditions=medusa-source packages/cli/src/bin.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.9",
+    "@types/node": "^24.19.2",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vitest": "5.1.2"
+  }
+}

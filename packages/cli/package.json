@@ -1,0 +1,23 @@
+{
+  "name": "@medusa-wallet/cli",
+  "version": "0.0.0",
+  "description": "Command-line interface for the medusa headless wallet",
+  "type": "module",
+  "bin": {
+    "medusa-wallet": "./dist/bin.js"
+  },
+  "exports": {
+    ".": {
+      "medusa-source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@medusa-wallet/core": "workspace:*",
+    "commander": "15.1.0"
+  }
+}
