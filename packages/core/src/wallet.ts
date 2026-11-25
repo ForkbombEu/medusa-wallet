@@ -3,11 +3,13 @@ import { dirname } from 'node:path'
 import { type AgentOptions, createAgent } from './agent.js'
 import { type CredentialRepository, createCredentialRepository } from './credentials/repository.js'
 import { WalletOpenError } from './errors.js'
+import { createIssuance, type Issuance } from './issuance/issuance.js'
 
 export type WalletOptions = AgentOptions
 
 export interface Wallet {
   readonly credentials: CredentialRepository
+  readonly issuance: Issuance
   close(): Promise<void>
 }
 
@@ -22,6 +24,7 @@ export async function openWallet(options: WalletOptions): Promise<Wallet> {
   }
   return {
     credentials: createCredentialRepository(agent),
+    issuance: createIssuance(agent),
     close: () => agent.shutdown(),
   }
 }

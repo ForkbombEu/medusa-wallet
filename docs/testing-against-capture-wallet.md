@@ -52,7 +52,7 @@ Wallet attestation client auth (`attest_jwt_client_auth`) is optional; anonymous
 
 The e2e suite discovers what to test instead of hardcoding it:
 
-1. List capture-wallet's credential issuers and, for each, its credential configurations from `/.well-known/openid-credential-issuer/issuers/<issuer_configuration_id>`.
+1. List capture-wallet's credential issuers with `GET /issuers`. Each entry carries `id` and `credential_configuration_ids`; the full configuration (format, proof types) is at its `credential_issuer_metadata` URL.
 2. For each issuer × configuration × supported flow (`pre_authorized_code`, `authorization_code`), create a session with `POST /sessions`.
 3. Run the deeplink through medusa core and assert the stored credential and the session's `/events`.
 4. When medusa does not yet support what a combination needs (for example key attestation), report that case as skipped with the reason instead of failing the suite.

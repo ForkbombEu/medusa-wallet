@@ -20,3 +20,36 @@ export class CredentialNotFoundError extends MedusaError {
 export class UnsupportedCredentialError extends MedusaError {
   override name = 'UnsupportedCredentialError'
 }
+
+/** The credential offer could not be parsed, fetched, or its issuer metadata resolved. */
+export class OfferResolutionError extends MedusaError {
+  override name = 'OfferResolutionError'
+}
+
+/** The offer requires a transaction code (tx_code) and none was given. */
+export class TxCodeRequiredError extends MedusaError {
+  override name = 'TxCodeRequiredError'
+
+  constructor(readonly txCode: TxCodeSpec) {
+    super(`The offer requires a transaction code${txCode.description ? `: ${txCode.description}` : ''}`)
+  }
+}
+
+/** A token or credential request was rejected; `response` holds what the issuer sent, when known. */
+export class IssuanceError extends MedusaError {
+  override name = 'IssuanceError'
+
+  constructor(
+    message: string,
+    readonly response: unknown,
+    options?: ErrorOptions,
+  ) {
+    super(message, options)
+  }
+}
+
+export interface TxCodeSpec {
+  inputMode?: 'numeric' | 'text'
+  length?: number
+  description?: string
+}
