@@ -3,3 +3,6 @@ packages:
 
 allowBuilds:
   esbuild: true
+  "@openwallet-foundation/askar-nodejs": true
+  koffi: true
+  cbor-extract: false
