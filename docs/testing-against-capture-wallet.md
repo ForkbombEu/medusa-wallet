@@ -72,4 +72,6 @@ A new issuer or configuration on capture-wallet is covered with no test changes.
 
 ## Writing an e2e test
 
+Create sessions with `createIssuanceSession` (`packages/core/test/support/capture-wallet.ts`). It prints each session's browser page, `capture-wallet session <id>: $CAPTURE_WALLET_URL/ui/sessions/<id>`, under the test name, so any run (local or CI) can be inspected in capture-wallet's UI. Vitest hides output from passing tests when it detects an AI agent (`CLAUDECODE`, `AI_AGENT`); pass `--silent=false` there.
+
 Name it `*.e2e.test.ts`. Assert both sides: what medusa stored (the decoded claims) and what capture-wallet recorded in `/events`. Assert on the session status rather than on log text.
