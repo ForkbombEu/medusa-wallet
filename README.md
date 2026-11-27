@@ -39,6 +39,8 @@ E2E tests run against capture-wallet; the per-issuer suite tests every issuer ×
 CAPTURE_WALLET_URL=https://capture-wallet.credimi.io task test:e2e
 ```
 
+GitHub Actions (`.github/workflows/ci.yml`) runs lint, unit tests and e2e on every pull request and on every push to `main`.
+
 ## CLI examples
 
 Set `MEDUSA_WALLET_KEY` first. The wallet lives in `~/.medusa-wallet/wallet.db` unless `MEDUSA_WALLET_DIR` or `--wallet-dir` says otherwise. Full reference: [docs/cli.md](docs/cli.md).

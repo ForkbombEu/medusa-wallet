@@ -4,7 +4,7 @@
 
 ## Pointing medusa at it
 
-E2E tests read `CAPTURE_WALLET_URL` and are skipped when it is unset.
+E2E tests read `CAPTURE_WALLET_URL` and are skipped when it is unset. CI sets it to the hosted instance, so every pull request and every push to `main` runs the e2e suite against `https://capture-wallet.credimi.io`.
 
 ```sh
 # hosted
