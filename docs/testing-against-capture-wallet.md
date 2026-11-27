@@ -40,14 +40,14 @@ curl -s "$CAPTURE_WALLET_URL/sessions/<session_id>/events"   # what medusa sent
 
 ## Issuers and what they demand
 
-| `issuer_configuration_id`       | Proof                                     | Notes                                 |
-| ------------------------------- | ----------------------------------------- | ------------------------------------- |
-| `eu-pid-jwt-proof-only`         | `jwt` with `header.jwk`                   | Start here: no key attestation needed |
-| `eu-pid-jwt-key-attestation`    | `jwt` + `header.key_attestation`          | Needs key attestation                 |
-| `eu-pid-device-bound` (default) | `jwt` + key attestation, or `attestation` | Needs key attestation                 |
-| `attestbook-experimental`       | `jwt` + key attestation, or `attestation` | Experimental; needs key attestation   |
+| `issuer_configuration_id`       | Proof                                     | Notes                                                                         |
+| ------------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------- |
+| `eu-pid-jwt-proof-only`         | `jwt` with `header.jwk`                   | Start here: no key attestation needed                                         |
+| `eu-pid-jwt-key-attestation`    | `jwt` + `header.key_attestation`          | Needs key attestation; medusa sends `jwt` + `key_attestation`                 |
+| `eu-pid-device-bound` (default) | `jwt` + key attestation, or `attestation` | Needs key attestation; medusa sends `jwt` + `key_attestation`                 |
+| `attestbook-experimental`       | `jwt` + key attestation, or `attestation` | Experimental; the hosted instance lists no configurations for it (2026-11-27) |
 
-Wallet attestation client auth (`attest_jwt_client_auth`) is optional; anonymous pre-authorized token requests are accepted. The service trusts the last certificate in an attestation's `x5c` chain, so self-signed test attesters work.
+Wallet attestation client auth (`attest_jwt_client_auth`) is optional; anonymous pre-authorized token requests are accepted. The service trusts the last certificate in an attestation's `x5c` chain, so self-signed test attesters work. medusa's key attester is one: a P-256 key with a self-signed certificate, created once per wallet (`packages/core/src/keys/key-attestation.ts`). capture-wallet records `checks.key_attestation_verified: true` for it.
 
 ## Automatic per-issuer suite
 
@@ -64,11 +64,11 @@ Wallet attestation client auth (`attest_jwt_client_auth`) is optional; anonymous
 
 ```sh
 CAPTURE_WALLET_URL=https://capture-wallet.credimi.io pnpm vitest run --project e2e --reporter=verbose packages/core
-# ↓ … urn:eu.europa.ec.eudi:pid:1.sd-jwt.key-attestation-required via pre_authorized_code: key attestation not implemented
-# ✓ … urn:eu.europa.ec.eudi:pid:1.mdoc.jwt-proof via pre_authorized_code
+# ✓ … urn:eu.europa.ec.eudi:pid:1.sd-jwt.key-attestation-required via pre_authorized_code
+# ↓ … urn:eu.europa.ec.eudi:pid:1.sd-jwt.key-attestation-required via authorization_code: authorization_code flow not implemented
 ```
 
-A new issuer or configuration on capture-wallet is covered with no test changes. When medusa gains a capability (auth code, key attestation), relax the matching rule in `unsupportedReason` and its unit test, and the suite starts running those combinations.
+A new issuer or configuration on capture-wallet is covered with no test changes. When medusa gains a capability (next: auth code), relax the matching rule in `unsupportedReason` and its unit test, and the suite starts running those combinations.
 
 ## Writing an e2e test
 
