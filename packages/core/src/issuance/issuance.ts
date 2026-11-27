@@ -4,6 +4,7 @@ import { decodeMdocRecord, decodeSdJwtVcRecord } from '../credentials/decode.js'
 import type { Credential } from '../credentials/types.js'
 import { IssuanceError, OfferResolutionError, TxCodeRequiredError, UnsupportedCredentialError } from '../errors.js'
 import { p256JwkBinding } from '../keys/holder-binding.js'
+import { type KeyAttester, loadKeyAttester } from '../keys/key-attestation.js'
 import { credoOfferFor, type ResolvedOffer, toResolvedOffer } from './offer.js'
 
 export interface ReceivePreAuthorizedOptions {
@@ -30,6 +31,15 @@ const errorMessage = (error: unknown) => (error instanceof Error ? error.message
 
 export function createIssuance(agent: MedusaAgent): Issuance {
   const holder = agent.openid4vc.holder
+  // Loaded once per wallet session; the resolver runs per credential configuration.
+  let keyAttester: Promise<KeyAttester> | undefined
+  const credentialBindingResolver = p256JwkBinding(() => {
+    keyAttester ??= loadKeyAttester(agent).catch((error: unknown) => {
+      keyAttester = undefined
+      throw error
+    })
+    return keyAttester
+  })
 
   async function store(record: unknown): Promise<Credential> {
     if (record instanceof SdJwtVcRecord) return decodeSdJwtVcRecord(await agent.sdJwtVc.store({ record }))
@@ -71,7 +81,7 @@ export function createIssuance(agent: MedusaAgent): Issuance {
           ...(token.dpop !== undefined && { dpop: token.dpop }),
           ...(options.credentialConfigurationIds && { credentialConfigurationIds: options.credentialConfigurationIds }),
           allowedProofOfPossessionSignatureAlgorithms: ['ES256'],
-          credentialBindingResolver: p256JwkBinding,
+          credentialBindingResolver,
         })
       } catch (cause) {
         throw new IssuanceError(`Credential request failed: ${errorMessage(cause)}`, issuerResponse(cause), { cause })

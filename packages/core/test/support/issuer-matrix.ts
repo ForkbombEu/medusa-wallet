@@ -29,7 +29,6 @@ export function unsupportedReason(configuration: CredentialConfigurationMetadata
   if (!STORABLE_FORMATS.includes(configuration.format)) return `format ${configuration.format} not supported`
   const jwtProof = configuration.proof_types_supported?.jwt
   if (!jwtProof) return 'no jwt proof type offered'
-  if (jwtProof.key_attestations_required) return 'key attestation not implemented'
   if (jwtProof.proof_signing_alg_values_supported && !jwtProof.proof_signing_alg_values_supported.includes('ES256')) {
     return 'jwt proof does not allow ES256'
   }

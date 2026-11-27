@@ -27,12 +27,12 @@ describe('issuer matrix', () => {
     expect(unsupportedReason(sdJwt, 'authorization_code')).toMatch(/authorization_code/)
   })
 
-  it('skips configurations that require key attestation', () => {
+  it('runs configurations that require key attestation', () => {
     const attested = {
       ...sdJwt,
       proof_types_supported: { jwt: { proof_signing_alg_values_supported: ['ES256'], key_attestations_required: {} } },
     }
-    expect(unsupportedReason(attested, 'pre_authorized_code')).toMatch(/key attestation/)
+    expect(unsupportedReason(attested, 'pre_authorized_code')).toBeUndefined()
   })
 
   it('skips configurations without a jwt proof type', () => {

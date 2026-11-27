@@ -7,7 +7,7 @@ Testing a credential issuer or verifier normally means a phone, a wallet app, an
 Main functionalities:
 
 - a persistent, encrypted credential store (SQLite through Askar) holding SD-JWT VC (`dc+sd-jwt`) and mdoc (`mso_mdoc`) credentials, decoded into readable claims;
-- receiving credentials over OpenID4VCI 1.0: pre-authorized code flow, with or without tx_code (authorization-code flow in progress);
+- receiving credentials over OpenID4VCI 1.0: pre-authorized code flow, with or without tx_code, including issuers that require key attestation (authorization-code flow in progress);
 - presenting credentials over OpenID4VP 1.0 with DCQL (planned);
 - automated runs against [capture-wallet](https://capture-wallet.credimi.io), Credimi's test issuer and verifier: the e2e suite discovers every published issuer and credential configuration and tests each one, skipping what medusa does not support yet with the reason.
 
