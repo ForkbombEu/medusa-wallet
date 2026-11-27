@@ -4,7 +4,7 @@
 
 ## Pointing medusa at it
 
-E2E tests read `CAPTURE_WALLET_URL` and are skipped when it is unset.
+E2E tests read `CAPTURE_WALLET_URL` and are skipped when it is unset. CI sets it to the hosted instance, so every pull request and every push to `main` runs the e2e suite against `https://capture-wallet.credimi.io`.
 
 ```sh
 # hosted
@@ -45,20 +45,33 @@ curl -s "$CAPTURE_WALLET_URL/sessions/<session_id>/events"   # what medusa sent
 | `eu-pid-jwt-proof-only`         | `jwt` with `header.jwk`                   | Start here: no key attestation needed |
 | `eu-pid-jwt-key-attestation`    | `jwt` + `header.key_attestation`          | Needs key attestation                 |
 | `eu-pid-device-bound` (default) | `jwt` + key attestation, or `attestation` | Needs key attestation                 |
+| `attestbook-experimental`       | `jwt` + key attestation, or `attestation` | Experimental; needs key attestation   |
 
 Wallet attestation client auth (`attest_jwt_client_auth`) is optional; anonymous pre-authorized token requests are accepted. The service trusts the last certificate in an attestation's `x5c` chain, so self-signed test attesters work.
 
-## Automatic per-issuer suite (target)
+## Automatic per-issuer suite
 
-The e2e suite discovers what to test instead of hardcoding it:
+`packages/core/test/issuers.e2e.test.ts` discovers what to test instead of hardcoding it:
 
-1. List capture-wallet's credential issuers with `GET /issuers`. Each entry carries `id` and `credential_configuration_ids`; the full configuration (format, proof types) is at its `credential_issuer_metadata` URL.
-2. For each issuer × configuration × supported flow (`pre_authorized_code`, `authorization_code`), create a session with `POST /sessions`.
-3. Run the deeplink through medusa core and assert the stored credential and the session's `/events`.
-4. When medusa does not yet support what a combination needs (for example key attestation), report that case as skipped with the reason instead of failing the suite.
+1. `GET /issuers` lists the issuers. Each entry carries `credential_configuration_ids` and its metadata URLs.
+2. The issuer metadata gives each configuration's format and proof types. The authorization server's `grant_types_supported` gives the flows (`pre_authorized_code`, `authorization_code`).
+3. Each issuer × configuration × flow becomes its own test. It creates a session with `POST /sessions`, runs the deeplink through medusa core, then asserts:
+   - what medusa stored: format and type (`vct` / `doctype`)
+   - the session status `credential_issued`
+   - the last Credo issuer state `Completed`
 
-A new issuer or configuration on capture-wallet is then covered with no test changes.
+`unsupportedReason` in `packages/core/test/support/issuer-matrix.ts` decides from the metadata which combinations medusa cannot run yet. Those are reported as skipped, with the reason in the test name. The skip list doubles as the backlog:
+
+```sh
+CAPTURE_WALLET_URL=https://capture-wallet.credimi.io pnpm vitest run --project e2e --reporter=verbose packages/core
+# ↓ … urn:eu.europa.ec.eudi:pid:1.sd-jwt.key-attestation-required via pre_authorized_code: key attestation not implemented
+# ✓ … urn:eu.europa.ec.eudi:pid:1.mdoc.jwt-proof via pre_authorized_code
+```
+
+A new issuer or configuration on capture-wallet is covered with no test changes. When medusa gains a capability (auth code, key attestation), relax the matching rule in `unsupportedReason` and its unit test, and the suite starts running those combinations.
 
 ## Writing an e2e test
+
+Create sessions with `createIssuanceSession` (`packages/core/test/support/capture-wallet.ts`). It prints each session's browser page, `capture-wallet session <id>: $CAPTURE_WALLET_URL/ui/sessions/<id>`, under the test name, so any run (local or CI) can be inspected in capture-wallet's UI. Vitest hides output from passing tests when it detects an AI agent (`CLAUDECODE`, `AI_AGENT`); pass `--silent=false` there.
 
 Name it `*.e2e.test.ts`. Assert both sides: what medusa stored (the decoded claims) and what capture-wallet recorded in `/events`. Assert on the session status rather than on log text.
