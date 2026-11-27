@@ -9,7 +9,7 @@ Main functionalities:
 - a persistent, encrypted credential store (SQLite through Askar) holding SD-JWT VC (`dc+sd-jwt`) and mdoc (`mso_mdoc`) credentials, decoded into readable claims;
 - receiving credentials over OpenID4VCI 1.0: pre-authorized code flow, with or without tx_code (authorization-code flow in progress);
 - presenting credentials over OpenID4VP 1.0 with DCQL (planned);
-- automated runs against [capture-wallet](https://capture-wallet.credimi.io), Credimi's test issuer and verifier (in progress).
+- automated runs against [capture-wallet](https://capture-wallet.credimi.io), Credimi's test issuer and verifier: the e2e suite discovers every published issuer and credential configuration and tests each one, skipping what medusa does not support yet with the reason.
 
 ## Technical specs
 
@@ -33,7 +33,7 @@ task lint && task test    # validate
 task build                # emit packages/*/dist
 ```
 
-E2E tests run against capture-wallet:
+E2E tests run against capture-wallet; the per-issuer suite tests every issuer × configuration × flow it publishes:
 
 ```sh
 CAPTURE_WALLET_URL=https://capture-wallet.credimi.io task test:e2e
